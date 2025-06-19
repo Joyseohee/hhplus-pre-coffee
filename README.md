@@ -1,3 +1,12 @@
+# 커피 주문 시스템
+
+* 커피 메뉴를 조회하고 주문하는 일련의 과정을 구현
+* 동시성 이슈를 고려하여 구현
+* TDD 방법론을 적용하여 개발
+
+## 유즈케이스 다이어그램
+<img alt="coffee.png" src="src/main/resources/static/coffee.png" title="use case diagram" width="500"/>
+
 ## ✅ 커밋 메시지 컨벤션
 
 형식:
