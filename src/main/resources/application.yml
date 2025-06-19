@@ -1,0 +1,32 @@
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: local
+
+  application:
+    name: board
+  datasource:
+    url: jdbc:postgresql://localhost:5432/coffee?currentSchema=coffee
+    username: ${COFFEE_DB_USERNAME}
+    password: ${COFFEE_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update   # 또는 none, validate, create-drop (운영 주의)
+    show-sql: true        # 콘솔에 SQL 출력
+    properties:
+      hibernate:
+        format_sql: true  # 보기 좋게 출력
+    open-in-view: false   # 트랜잭션 범위 밖 LazyLoad 방지
+
+  jackson:
+    property-naming-strategy: SNAKE_CASE # JSON 필드 네이밍 전략
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+
