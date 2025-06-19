@@ -7,6 +7,9 @@
 ## 유즈케이스 다이어그램
 <img alt="coffee.png" src="src/main/resources/static/coffee.png" title="use case diagram" width="500"/>
 
+## API 명세서
+https://documenter.getpostman.com/view/25428915/2sB2xBBp4T
+
 ## ✅ 커밋 메시지 컨벤션
 
 형식:
