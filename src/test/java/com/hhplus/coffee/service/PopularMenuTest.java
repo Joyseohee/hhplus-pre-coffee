@@ -11,6 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
@@ -60,4 +68,46 @@ public class PopularMenuTest {
 		assertThat(result.get(2)).extracting(PopularMenu::menuName, PopularMenu::orderCount)
 				.containsExactly("모카", 1);
 	}
+	
+	
+	@Test
+	void 주문과_인기메뉴_조회가_동시에_이뤄져도_둘다_성공한다() throws InterruptedException {
+		ExecutorService executor = Executors.newFixedThreadPool(2);
+		CountDownLatch latch = new CountDownLatch(2);
+		
+		List<String> result = Collections.synchronizedList(new ArrayList<>());
+		
+		executor.submit(() -> {
+			try {
+				orderService.placeOrder(user.getId(), americano.getId());
+				result.add("주문 성공");
+			} catch (Exception e) {
+				result.add("주문 실패");
+			} finally {
+				latch.countDown();
+			}
+		});
+		
+		executor.submit(() -> {
+			try {
+				List<PopularMenu> popularMenus = menuService.getPopularMenus();
+				System.out.println("인기메뉴 조회 결과: " + popularMenus);
+				result.add("인기메뉴 조회 성공");
+			} catch (Exception e) {
+				result.add("인기메뉴 조회 실패");
+			} finally {
+				latch.countDown();
+			}
+		});
+		
+		latch.await();
+		
+		System.out.println("결과: " + result);
+		
+		assertThat(result).containsExactlyInAnyOrder("주문 성공", "인기메뉴 조회 성공");
+		assertThat(orderRepository.count()).isEqualTo(3);
+		List<PopularMenu> popularMenus = menuService.getPopularMenus();
+		assertThat(popularMenus.get(0).orderCount()).isEqualTo(3);
+	}
+	
 }

@@ -112,7 +112,6 @@ class OrderServiceTest {
 		verify(orderRepository, never()).save(any(Order.class));
 	}
 	
-	// 동시성 이슈 - 3번 API에서부터
 	@Test
 	void 같은_유저가_동시에_주문을_하면_한쪽은_실패한다() throws Exception {
 		ExecutorService executor = Executors.newFixedThreadPool(2);
@@ -139,6 +138,8 @@ class OrderServiceTest {
 		assertEquals(1, orderRepository.count());
 		assertEquals(1, errors.size()); // 하나는 실패
 	}
+	
+	
 	
 	@Test
 	void 같은_유저가_동시에_주문과_충전을_하면_한쪽은_실패한다() throws Exception {
